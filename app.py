@@ -8,13 +8,13 @@ from mysql.connector import connect, Error
 app = Flask(__name__)
 
 # Load MySQL credentials from environment variables
-MYSQL_HOST = os.getenv('MYSQL_HOST')
-MYSQL_USER = os.getenv('MYSQL_USER')
-MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
-MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
+MYSQL_HOST = os.environ.get('MYSQL_HOST')
+MYSQL_USER = os.environ.get('MYSQL_USER')
+MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD')
+MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE')
 
 # Replace with your actual n8n webhook URL
-N8N_WEBHOOK_URL = os.getenv(
+N8N_WEBHOOK_URL = os.environ.get(
     'N8N_WEBHOOK_URL', "https://n8n.hirelypro.io/webhook/b74ae861-8489-47ad-8663-0086a1059588/chat"
 )
 
