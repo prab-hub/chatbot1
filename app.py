@@ -30,6 +30,7 @@ def get_db_connection():
             password=MYSQL_PASSWORD,
             database=MYSQL_DATABASE
         )
+        print("Successfully connected to the database")
         return connection
     except Error as e:
         print(f"Error connecting to MySQL: {e}")
