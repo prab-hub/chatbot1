@@ -3,18 +3,15 @@ import requests
 import os
 from werkzeug.exceptions import BadRequest
 from mysql.connector import connect, Error
-from dotenv import load_dotenv
 
-# Load environment variables from .env file (for local testing)
-load_dotenv()
 
 app = Flask(__name__)
 
 # Load MySQL credentials from environment variables
-MYSQL_HOST = os.environ['MYSQL_HOST']
-MYSQL_USER = os.environ['MYSQL_USER']
-MYSQL_PASSWORD = os.environ['MYSQL_PASSWORD']
-MYSQL_DATABASE = os.environ['MYSQL_DATABASE']
+MYSQL_HOST = os.environ.get('MYSQL_HOST')
+MYSQL_USER = os.environ.get('MYSQL_USER')
+MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD')
+MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE')
 
 # Replace with your actual n8n webhook URL
 N8N_WEBHOOK_URL = os.environ.get(
