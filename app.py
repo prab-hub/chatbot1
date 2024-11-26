@@ -6,7 +6,7 @@ from mysql.connector import connect, Error
 from dotenv import load_dotenv
 
 # Load the secrets from the .env file
-load_dotenv('/etc/secrets/.env')
+load_dotenv('/etc/secrets/cred')
 
 
 app = Flask(__name__)
