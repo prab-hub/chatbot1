@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 import os
+from werkzeug.exceptions import BadRequest
+
 
 app = Flask(__name__)
 
@@ -22,8 +24,8 @@ def chat():
     # Get the user's message from the POST request
     user_message = request.json.get('message')
     
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
+    if not user_message or len(user_message.strip()) == 0:
+        raise BadRequest("Message is empty")
 
     try:
         # Send the user's message to the n8n webhook

@@ -33,7 +33,7 @@ h1 {
 #chatbox {
     display: flex;
     flex-direction: column;
-    height: 400px;
+    height: auto;
 }
 
 #messages {
@@ -44,25 +44,31 @@ h1 {
     margin-bottom: 15px;
     background-color: #fafafa;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between messages */
 }
 
 .message {
-    margin-bottom: 15px;
-    padding: 8px;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 8px 12px;
     border-radius: 8px;
-    max-width: 80%;
-    word-wrap: break-word;
+    max-width: 100%; /* Prevent messages from exceeding container width */
+    word-wrap: break-word; /* Ensure text wraps within the container */
+    font-size: 14px;
 }
 
 .user-message {
     background-color: #d1ecf1;
-    margin-left: auto;
-    text-align: right;
+    align-self: flex-end; /* Align user messages to the right */
+    text-align: left;
 }
 
 .bot-message {
     background-color: #e2e3e5;
-    margin-right: auto;
+    align-self: flex-start; /* Align bot messages to the left */
+    text-align: left;
 }
 
 /* Input field and button styling */
