@@ -11,8 +11,10 @@
         <h1>Chatbot</h1>
         <div id="chatbox">
             <div id="messages"></div>
-            <input type="text" id="messageInput" placeholder="Type a message...">
-            <button id="sendButton">Send</button>
+            <div class="input-container">
+                <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+                <button id="sendButton">Send</button>
+            </div>
         </div>
     </div>
 
@@ -26,7 +28,8 @@
             if (!userMessage) return;
 
             // Display user message
-            const userMsgElem = document.createElement('p');
+            const userMsgElem = document.createElement('div');
+            userMsgElem.classList.add('message', 'user-message');
             userMsgElem.textContent = `You: ${userMessage}`;
             messagesDiv.appendChild(userMsgElem);
 
@@ -40,11 +43,22 @@
             const data = await response.json();
 
             // Display bot response
-            const botMsgElem = document.createElement('p');
+            const botMsgElem = document.createElement('div');
+            botMsgElem.classList.add('message', 'bot-message');
             botMsgElem.textContent = `Bot: ${data.response || "Error in response"}`;
             messagesDiv.appendChild(botMsgElem);
 
+            // Scroll to the bottom of the chat
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
             messageInput.value = '';
+        });
+
+        // Optional: Allow pressing 'Enter' to send the message
+        messageInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
         });
     </script>
 </body>
