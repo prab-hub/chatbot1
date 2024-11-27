@@ -129,22 +129,22 @@ def chat():
 
 
 def save_message_to_db(question, answer, userid):
-connection = get_db_connection()
-if connection:
-    try:
-        cursor = connection.cursor()
-        cursor.execute("""
-            INSERT INTO questions (questiontext, userid) VALUES (%s, %s)
-        """, (question, userid))
-        question_id = cursor.lastrowid
+    connection = get_db_connection()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute("""
+                INSERT INTO questions (questiontext, userid) VALUES (%s, %s)
+            """, (question, userid))
+            question_id = cursor.lastrowid
 
-        cursor.execute("""
-            INSERT INTO answers (answertext, questionid, userid) VALUES (%s, %s, %s)
-        """, (answer, question_id, userid))
-        connection.commit()
-    except Error as e:
+            cursor.execute("""
+                INSERT INTO answers (answertext, questionid, userid) VALUES (%s, %s, %s)
+            """, (answer, question_id, userid))
+            connection.commit()
+        except Error as e:
             print(f"Error saving message to database: {e}")
-    finally:
+        finally:
             connection.close()
 
 if __name__ == '__main__':
