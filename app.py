@@ -60,6 +60,11 @@ def signup():
     # Handle user signup for POST method
     try:
         data = request.get_json()  # Parse the incoming JSON data
+
+
+        if not data:
+            raise BadRequest("Invalid JSON payload")
+        
         username = data.get('username')
         password = data.get('password')
 
@@ -77,10 +82,11 @@ def signup():
         connection.commit()
 
         return jsonify({"success": True}), 200  # Return JSON response indicating success
+    
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        connection.close()
+        # Log the exception for debugging
+        print(f"Error during signup: {str(e)}")
+        return jsonify({"error": str(e)}), 500  # Return error details as JSON
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
