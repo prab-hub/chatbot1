@@ -124,7 +124,7 @@ def login():
         if bcrypt.check_password_hash(user['password_hash'], password):
             session['userid'] = user['id']
             session['username'] = user['username']
-            return jsonify({"success": True}), 200
+            return jsonify({"success": True, "username": user['username'], "id": user['id']}), 200
 
         print("Password hash mismatch.")
         return jsonify({"error": "Password hash mismatch."}), 401
