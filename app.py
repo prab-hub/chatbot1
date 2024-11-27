@@ -128,7 +128,7 @@ def chat():
         return jsonify({"error": "Failed to connect to n8n webhook.", "details": str(e)}), 500
 
 
-save_message_to_db(question, answer, userid):
+def save_message_to_db(question, answer, userid):
 connection = get_db_connection()
 if connection:
     try:
