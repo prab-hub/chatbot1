@@ -100,15 +100,21 @@ def login():
     if request.method == "GET":
         return render_template('login.html')
 
-    # Handle user login
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    if not username or not password:
-        raise BadRequest("Username and password are required.")
-
-    connection = get_db_connection()
+    # Handle user login for POST method
     try:
+        # Parse the incoming JSON data
+        data = request.get_json()
+
+        if not data:
+            raise BadRequest("Invalid JSON payload")
+
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            raise BadRequest("Username and password are required.")
+
+        connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cursor.fetchone()
@@ -116,9 +122,11 @@ def login():
         if user and bcrypt.check_password_hash(user['password_hash'], password):
             session['userid'] = user['id']
             session['username'] = user['username']
-            return redirect(url_for('index'))  # Redirect to the chat page after successful login
+            return jsonify({"success": True}), 200  # Indicate successful login
         else:
-            return jsonify({"error": "Invalid credentials."}), 401
+            return jsonify({"error": "Invalid credentials."}), 401  # Invalid credentials response
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # Return error message in case of exception
     finally:
         connection.close()
 
