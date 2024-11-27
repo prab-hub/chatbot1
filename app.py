@@ -68,8 +68,8 @@ def signup():
         if not data:
             raise BadRequest("Invalid JSON payload")
         
-        username = data.get('username')
-        password = data.get('password')
+        username = data.get('username', '').strip().lower()
+        password = data.get('password', '').strip()
 
         if not username or not password:
             raise BadRequest("Username and password are required.")
@@ -107,7 +107,7 @@ def login():
             raise BadRequest("Invalid JSON payload")
 
         username = data.get('username', '').strip().lower()
-        password = data.get('password')
+        password = data.get('password', '').strip()
 
         if not username or not password:
             raise BadRequest("Username and password are required.")
@@ -116,6 +116,7 @@ def login():
         cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cursor.fetchone()
+        print(f"Query result: {user}")
 
         if not user:
             print(f"User {username} not found in database.")
