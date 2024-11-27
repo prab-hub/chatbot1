@@ -10,6 +10,77 @@ body {
     background-color: #f7f7f7;
 }
 
+/* Auth container styles */
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-group input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+}
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:focus {
+    outline: none;
+}
+
+p {
+    text-align: center;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 /* Chat container styling */
 .chat-container {
     width: 100%;
@@ -23,13 +94,6 @@ body {
     justify-content: space-between;
 }
 
-h1 {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-/* Chatbox styles */
 #chatbox {
     display: flex;
     flex-direction: column;
@@ -46,65 +110,12 @@ h1 {
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Space between messages */
+    gap: 10px;
 }
 
 .message {
     display: inline-block;
     margin-bottom: 10px;
     padding: 8px 12px;
-    border-radius: 8px;
-    max-width: 100%; /* Prevent messages from exceeding container width */
-    word-wrap: break-word; /* Ensure text wraps within the container */
-    font-size: 14px;
-}
-
-.user-message {
-    background-color: #d1ecf1;
-    align-self: flex-end; /* Align user messages to the right */
-    text-align: left;
-}
-
-.bot-message {
-    background-color: #e2e3e5;
-    align-self: flex-start; /* Align bot messages to the left */
-    text-align: left;
-}
-
-/* Input field and button styling */
-.input-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#messageInput {
-    padding: 10px;
-    width: calc(100% - 100px);
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-right: 10px;
-    outline: none;
-}
-
-#messageInput:focus {
-    border-color: #007bff;
-}
-
-#sendButton {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#sendButton:hover {
-    background-color: #0056b3;
-}
-
-#sendButton:focus {
-    outline: none;
+    border-radius: 
 }

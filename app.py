@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_session import Session
 import requests
@@ -8,18 +8,15 @@ from mysql.connector import connect, Error
 from dotenv import load_dotenv
 
 # Load the secrets from the .env file
-load_dotenv('/etc/secrets/cred')
-
+load_dotenv('.env')
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 # Session configuration
-
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 Session(app)
-
 
 # Load MySQL credentials from environment variables
 MYSQL_HOST = os.getenv('MYSQL_HOST')
@@ -49,12 +46,19 @@ def get_db_connection():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Check if the user is logged in
+    if 'userid' in session:
+        return render_template('chat.html', username=session['username'])  # Show the chat page if logged in
+    return render_template('login.html')  # Show login page if not logged in
 
-@app.route('/signup', methods=["POST"])
+@app.route('/signup', methods=["POST", "GET"])
 def signup():
-    username = request.json.get('username')
-    password = request.json.get('password')
+    if request.method == "GET":
+        return render_template('signup.html')
+    
+    # Handle user signup
+    username = request.form.get('username')
+    password = request.form.get('password')
 
     if not username or not password:
         raise BadRequest("Username and password are required.")
@@ -68,17 +72,20 @@ def signup():
             INSERT INTO users (username, password_hash) VALUES (%s, %s)
         """, (username, password_hash))
         connection.commit()
-        return jsonify({"message":"User registered successfully."})
+        return redirect(url_for('login'))  # Redirect to login page after successful signup
     except Error as e:
         return jsonify({"error": str(e)}), 500
     finally:
         connection.close()
 
-
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
-    username = request.json.get('username')
-    password = request.json.get('password')
+    if request.method == "GET":
+        return render_template('login.html')
+
+    # Handle user login
+    username = request.form.get('username')
+    password = request.form.get('password')
 
     if not username or not password:
         raise BadRequest("Username and password are required.")
@@ -90,9 +97,9 @@ def login():
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user['password_hash'], password):
-            session['userid'] = user['userid']
+            session['userid'] = user['id']
             session['username'] = user['username']
-            return jsonify({"message": "Login successful."})
+            return redirect(url_for('index'))  # Redirect to the chat page after successful login
         else:
             return jsonify({"error": "Invalid credentials."}), 401
     finally:
@@ -100,9 +107,8 @@ def login():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.clear()
-    return jsonify({"message": "Logged out successfully."})
-
+    session.clear()  # Clear session data
+    return redirect(url_for('index'))  # Redirect to the login page
 
 @app.route('/chat', methods=['POST'])
 def chat():
