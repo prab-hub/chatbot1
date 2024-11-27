@@ -13,6 +13,9 @@ load_dotenv('.env')
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
+# Enable debugging mode
+app.config['DEBUG'] = True
+
 # Session configuration
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
@@ -87,6 +90,10 @@ def signup():
         # Log the exception for debugging
         print(f"Error during signup: {str(e)}")
         return jsonify({"error": str(e)}), 500  # Return error details as JSON
+    
+    finally:
+        if connection:
+            connection.close()
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
