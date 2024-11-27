@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_bcrypt import Bcrypt
-from flask-session import Session
+from flask_session import Session
 import requests
 import os
 from werkzeug.exceptions import BadRequest
