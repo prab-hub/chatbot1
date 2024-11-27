@@ -40,7 +40,7 @@
             if (data.success) {
                 window.location.href = '/home'; // Redirect on success
             } else {
-                alert('Invalid credentials, please try again');
+                alert(data.error || 'Invalid credentials, please try again');
             }
         });
     </script>
