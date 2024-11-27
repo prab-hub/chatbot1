@@ -121,11 +121,9 @@ def login():
             print(f"User {username} not found in database.")
             return jsonify({"error": "Username not found."}), 401
 
-        print(f"Password hash from DB: {user['password_hash']}")  # Debugging line
         if bcrypt.check_password_hash(user['password_hash'], password):
             session['userid'] = user['id']
             session['username'] = user['username']
-            print(f"Session data: {session}")  # Debugging line
             return jsonify({"success": True}), 200
 
         print("Password hash mismatch.")
