@@ -8,7 +8,7 @@ from mysql.connector import connect, Error
 from dotenv import load_dotenv
 
 # Load the secrets from the .env file
-load_dotenv('.env')
+load_dotenv('/etc/secrets/cred')
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
