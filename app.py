@@ -51,29 +51,33 @@ def index():
         return render_template('chat.html', username=session['username'])  # Show the chat page if logged in
     return render_template('login.html')  # Show login page if not logged in
 
+
 @app.route('/signup', methods=["POST", "GET"])
 def signup():
     if request.method == "GET":
         return render_template('signup.html')
     
-    # Handle user signup
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    if not username or not password:
-        raise BadRequest("Username and password are required.")
-    
-    password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-    connection = get_db_connection()
-
+    # Handle user signup for POST method
     try:
+        data = request.get_json()  # Parse the incoming JSON data
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            raise BadRequest("Username and password are required.")
+        
+        password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        
+        # DB connection and insert user
+        connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute("""
             INSERT INTO users (username, password_hash) VALUES (%s, %s)
         """, (username, password_hash))
         connection.commit()
-        return redirect(url_for('login'))  # Redirect to login page after successful signup
-    except Error as e:
+
+        return jsonify({"success": True}), 200  # Return JSON response indicating success
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
         connection.close()
