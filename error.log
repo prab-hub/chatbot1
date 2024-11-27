@@ -1,0 +1,42 @@
+[2024-11-28 02:44:12 +0530] [41255] [INFO] Starting gunicorn 23.0.0
+[2024-11-28 02:44:12 +0530] [41255] [INFO] Listening at: http://127.0.0.1:8000 (41255)
+[2024-11-28 02:44:12 +0530] [41255] [INFO] Using worker: sync
+[2024-11-28 02:44:12 +0530] [41257] [INFO] Booting worker with pid: 41257
+[2024-11-28 02:44:12 +0530] [41257] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/Users/prabhulingmathad/Developer/Python/ChatBot App1/chatbot_env/lib/python3.13/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/prabhulingmathad/Developer/Python/ChatBot App1/chatbot_env/lib/python3.13/site-packages/gunicorn/workers/base.py", line 135, in init_process
+    self.load_wsgi()
+    ~~~~~~~~~~~~~~^^
+  File "/Users/prabhulingmathad/Developer/Python/ChatBot App1/chatbot_env/lib/python3.13/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+    self.wsgi = self.app.wsgi()
+                ~~~~~~~~~~~~~^^
+  File "/Users/prabhulingmathad/Developer/Python/ChatBot App1/chatbot_env/lib/python3.13/site-packages/gunicorn/app/base.py", line 66, in wsgi
+    self.callable = self.load()
+                    ~~~~~~~~~^^
+  File "/Users/prabhulingmathad/Developer/Python/ChatBot App1/chatbot_env/lib/python3.13/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+    return self.load_wsgiapp()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Users/prabhulingmathad/Developer/Python/ChatBot App1/chatbot_env/lib/python3.13/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+    return util.import_app(self.app_uri)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/prabhulingmathad/Developer/Python/ChatBot App1/chatbot_env/lib/python3.13/site-packages/gunicorn/util.py", line 370, in import_app
+    mod = importlib.import_module(module)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.0_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1022, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/prabhulingmathad/developer/python/chatbot app1/app.py", line 3, in <module>
+    from flask_session import Session
+ModuleNotFoundError: No module named 'flask_session'
+[2024-11-28 02:44:12 +0530] [41257] [INFO] Worker exiting (pid: 41257)
+[2024-11-28 02:44:12 +0530] [41255] [ERROR] Worker (pid:41257) exited with code 3
+[2024-11-28 02:44:12 +0530] [41255] [ERROR] Shutting down: Master
+[2024-11-28 02:44:12 +0530] [41255] [ERROR] Reason: Worker failed to boot.

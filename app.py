@@ -115,10 +115,8 @@ def login():
         cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cursor.fetchone()
-        print(f"Query result: {user}")  # Debugging line
 
         if not user:
-            print(f"User {username} not found in database.")
             return jsonify({"error": "Username not found."}), 401
 
         if bcrypt.check_password_hash(user['password_hash'], password):
@@ -126,14 +124,13 @@ def login():
             session['username'] = user['username']
             return jsonify({"success": True, "username": user['username'], "id": user['id']}), 200
 
-        print("Password hash mismatch.")
-        return jsonify({"error": "Password hash mismatch."}), 401
+        return jsonify({"error": "Incorrect password."}), 401
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
         connection.close()
-
+        
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()  # Clear session data
