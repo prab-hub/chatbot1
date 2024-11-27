@@ -119,7 +119,7 @@ def login():
 
         if not user:
             print(f"User {username} not found in database.")
-            return jsonify({"error": "Invalid credentials."}), 401
+            return jsonify({"error": "Username not found."}), 401
 
         if bcrypt.check_password_hash(user['password_hash'], password):
             session['userid'] = user['id']
@@ -127,7 +127,7 @@ def login():
             return jsonify({"success": True}), 200
 
         print("Password hash mismatch.")
-        return jsonify({"error": "Invalid credentials."}), 401
+        return jsonify({"error": "Password hash mismatch."}), 401
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
