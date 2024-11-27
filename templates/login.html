@@ -26,6 +26,8 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', async (event) => {
             event.preventDefault();
+            
+            // Get the input values
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
@@ -34,12 +36,14 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    username: usernameInput.value, 
-                    password: passwordInput.value,
+                    username: username,  // Use the defined username
+                    password: password,  // Use the defined password
                 })
             });
 
             const data = await response.json();
+
+            // Check if login was successful
             if (data.success) {
                 window.location.href = '/home'; // Redirect on success
             } else {
