@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify, render_template
+from flask_bcrypt import Bcrypt
+from flask-session import Session
 import requests
 import os
 from werkzeug.exceptions import BadRequest
@@ -10,6 +12,14 @@ load_dotenv('/etc/secrets/cred')
 
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
+
+# Session configuration
+
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
+Session(app)
+
 
 # Load MySQL credentials from environment variables
 MYSQL_HOST = os.getenv('MYSQL_HOST')
@@ -39,22 +49,71 @@ def get_db_connection():
 
 @app.route('/')
 def index():
-    """
-    Render the homepage.
-    """
     return render_template('index.html')
+
+@app.route('/signup', methods=["POST"])
+def signup():
+    username = request.json.get('username')
+    password = request.json.get('password')
+
+    if not username or not password:
+        raise BadRequest("Username and password are required.")
+    
+    password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    connection = get_db_connection()
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute("""
+            INSERT INTO users (username, password_hash) VALUES (%s, %s)
+        """, (username, password_hash))
+        connection.commit()
+        return jsonify({"message":"User registered successfully."})
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.json.get('username')
+    password = request.json.get('password')
+
+    if not username or not password:
+        raise BadRequest("Username and password are required.")
+
+    connection = get_db_connection()
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+
+        if user and bcrypt.check_password_hash(user['password_hash'], password):
+            session['userid'] = user['userid']
+            session['username'] = user['username']
+            return jsonify({"message": "Login successful."})
+        else:
+            return jsonify({"error": "Invalid credentials."}), 401
+    finally:
+        connection.close()
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({"message": "Logged out successfully."})
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    """
-    Handle chat messages from the frontend and interact with the n8n webhook.
-    """
+    if 'userid' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
     user_message = request.json.get('message')
     if not user_message or len(user_message.strip()) == 0:
         raise BadRequest("Message is empty")
 
     try:
-        # Send the user's message to the n8n webhook
         response = requests.post(
             N8N_WEBHOOK_URL, 
             json={"chatInput": user_message},
@@ -63,36 +122,29 @@ def chat():
         response.raise_for_status()
         ai_response = response.json().get('response', "No response received")
 
-        # Save question and response to the database
-        save_message_to_db(user_message, ai_response)
-        
+        save_message_to_db(user_message, ai_response, session['userid'])
         return jsonify({"response": ai_response})
     except requests.exceptions.RequestException as e:
         return jsonify({"error": "Failed to connect to n8n webhook.", "details": str(e)}), 500
-    except ValueError:
-        return jsonify({"error": "Invalid response from n8n webhook."}), 500
 
-def save_message_to_db(question, answer):
-    """
-    Save the user's question and AI's answer to the database.
-    """
-    connection = get_db_connection()
-    if connection:
-        try:
-            cursor = connection.cursor()
-            cursor.execute("""
-                INSERT INTO questions (question_text) VALUES (%s)
-            """, (question,))
-            question_id = cursor.lastrowid
 
-            cursor.execute("""
-                INSERT INTO answers (answer_text, question_id) VALUES (%s, %s)
-            """, (answer, question_id))
-            
-            connection.commit()
-        except Error as e:
+save_message_to_db(question, answer, userid):
+connection = get_db_connection()
+if connection:
+    try:
+        cursor = connection.cursor()
+        cursor.execute("""
+            INSERT INTO questions (questiontext, userid) VALUES (%s, %s)
+        """, (question, userid))
+        question_id = cursor.lastrowid
+
+        cursor.execute("""
+            INSERT INTO answers (answertext, questionid, userid) VALUES (%s, %s, %s)
+        """, (answer, question_id, userid))
+        connection.commit()
+    except Error as e:
             print(f"Error saving message to database: {e}")
-        finally:
+    finally:
             connection.close()
 
 if __name__ == '__main__':
